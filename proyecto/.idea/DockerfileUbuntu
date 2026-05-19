@@ -1,0 +1,19 @@
+# Use official Ubuntu as the base image
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    openjdk-17-jdk-headless \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the pre-built Kotlin fat JAR from your local machine into the container
+COPY build/libs/my-ktor-app-all.jar /app/ktor-app.jar
+
+EXPOSE 8080
+
+# Define the command to run the Kotlin application
+ENTRYPOINT ["java", "-jar", "/app/ktor-app.jar"]
+
