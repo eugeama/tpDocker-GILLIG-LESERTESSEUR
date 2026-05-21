@@ -1,0 +1,17 @@
+# 1. Crear una red para que los contenedores se comuniquen
+docker network create mi-red
+
+# 2. Construir y correr MySQL
+cd SQL
+docker build -t mi-mysql -f DockerfileSQL .
+docker run -d --name contenedor-sql --network mi-red \
+  -v "$(pwd)/init.sql:/docker-entrypoint-initdb.d/init.sql" mi-mysql
+
+# 3. Esperar ~15 seg a que MySQL inicie, luego construir y correr Ktor
+cd ..
+docker build -t mi-ktor -f DockerfileUbuntu .
+docker run -d --name contenedor-ktor --network mi-red -p 8081:8081 mi-ktor
+
+# 4. Probar
+curl http://localhost:8081/health       # → {"status":"UP","message":"API activa"}
+curl http://localhost:8081/db-status    # → {"status":"UP","connected":true,...}
