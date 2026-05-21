@@ -25,7 +25,6 @@ fun Application.configureRouting() {
             call.respond(HttpStatusCode.OK)
         }
 
-        // Salud de la API sin base de datos
         get("/health") {
             call.respond(
                 HttpStatusCode.OK,
@@ -33,10 +32,8 @@ fun Application.configureRouting() {
             )
         }
 
-        // Estado de la conexión a la base de datos
         get("/db-status") {
             try {
-                // Ejecutá la query de prueba con tu cliente de DB
                 val result = checkDatabaseConnection()
                 call.respond(
                     HttpStatusCode.OK,

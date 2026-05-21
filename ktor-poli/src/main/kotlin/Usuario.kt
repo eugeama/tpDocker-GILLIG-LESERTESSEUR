@@ -10,4 +10,5 @@ data class Usuario(
     val nombre: String,
     @Contextual
     val creado: LocalDate = LocalDate.now()
+
 )

@@ -25,7 +25,7 @@ fun checkDatabaseConnection(): String {
         conn.createStatement().use { stmt ->
             val rs = stmt.executeQuery("SELECT NOW()")
             rs.next()
-            return rs.getString(1)   // ej: "2026-05-19 14:32:00"
+            return rs.getString(1)
         }
     }
 }

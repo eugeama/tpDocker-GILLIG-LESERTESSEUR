@@ -4,4 +4,10 @@ ktor:
   application:
     modules:
       - com.example.SerializationKt.configureSerialization
+      - com.example.DatabaseKt.configureDatabase
       - com.example.RoutingKt.configureRouting
+
+db:
+  url: "jdbc:mysql://contenedor-sql:3306/my_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+  user: "user_name"
+  password: "user_password"
