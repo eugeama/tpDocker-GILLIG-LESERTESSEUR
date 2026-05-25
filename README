@@ -1,17 +1,31 @@
-# 1. Crear una red para que los contenedores se comuniquen
+# 1. Crear la red interna de Docker
 docker network create mi-red
 
-# 2. Construir y correr MySQL
+# 2. Construir y levantar MySQL
 cd SQL
 docker build -t mi-mysql -f DockerfileSQL .
-docker run -d --name contenedor-sql --network mi-red \
-  -v "$(pwd)/init.sql:/docker-entrypoint-initdb.d/init.sql" mi-mysql
+docker run -d --name contenedor-sql --network mi-red mi-mysql
 
-# 3. Esperar ~15 seg a que MySQL inicie, luego construir y correr Ktor
+# 3. Esperar ~15 segundos a que MySQL inicialice, luego construir y levantar Ktor
 cd ..
 docker build -t mi-ktor -f DockerfileUbuntu .
-docker run -d --name contenedor-ktor --network mi-red -p 8081:8081 mi-ktor
+docker run -d --name contenedor-ktor --network mi-red -p 8081:8081 \
+  -e DB_URL="jdbc:mysql://contenedor-sql:3306/my_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true" \
+  -e DB_USER="user_name" \
+  -e DB_PASSWORD="user_password" \
+  mi-ktor
 
 # 4. Probar
-curl http://localhost:8081/health       # → {"status":"UP","message":"API activa"}
-curl http://localhost:8081/db-status    # → {"status":"UP","connected":true,...}
+curl http://localhost:8081/health
+# → {"status":"UP","message":"API activa"}
+
+curl http://localhost:8081/db-status
+# → {"status":"UP","connected":true,"detail":"2026-05-25 ..."}
+
+curl -X POST http://localhost:8081/items \
+  -H "Content-Type: application/json" \
+  -d '{"nombre":"Laptop"}'
+# → HTTP 201
+
+curl http://localhost:8081/items
+# → [{"id":1,"nombre":"Admin","creado":"2026-05-25"},{"id":2,"nombre":"Laptop","creado":"2026-05-25"}]
