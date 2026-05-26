@@ -41,3 +41,9 @@ Invoke-WebRequest -Uri http://localhost:8081/items -Method POST -ContentType "ap
 
 curl http://localhost:8081/items
 # → [{"id":1,"nombre":"Admin","creado":"2026-05-25"},{"id":2,"nombre":"Laptop","creado":"2026-05-25"}]
+
+para parar todo:
+docker stop contenedor-ktor contenedor-sql
+docker rm contenedor-ktor contenedor-sql
+docker rmi mi-ktor mi-mysql
+docker network rm mi-red
